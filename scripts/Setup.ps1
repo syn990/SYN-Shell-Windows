@@ -87,11 +87,13 @@ try {
     $results["VirtualDesktop module"] = "FAILED: $_"
 }
 
-Write-Host "=== 5. Installing the Terminus Nerd Font (needs Chocolatey) ===" -ForegroundColor Cyan
-if ($hasChoco) {
+Write-Host "=== 5. Installing the Terminus Nerd Font (needs Chocolatey + admin) ===" -ForegroundColor Cyan
+if ($hasChoco -and $isAdmin) {
     choco install nerd-fonts-terminus -y | Out-Null
     $fontInstalled = Get-ChildItem "C:\Windows\Fonts" -Filter "TerminessNerdFontMono-Regular.ttf" -ErrorAction SilentlyContinue
     $results["Terminus Nerd Font"] = if ($fontInstalled) { "installed" } else { "FAILED - check manually: choco install nerd-fonts-terminus" }
+} elseif ($hasChoco -and -not $isAdmin) {
+    $results["Terminus Nerd Font"] = "skipped - installing fonts system-wide needs an elevated (Administrator) session; re-run this script as admin, or just run 'choco install nerd-fonts-terminus' yourself from an elevated prompt later"
 } else {
     $results["Terminus Nerd Font"] = "skipped - no Chocolatey (bar will fall back to a system font, icons may show as boxes)"
 }
@@ -120,10 +122,10 @@ try {
     $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -File `"$Root\scripts\Start-SynSession.ps1`""
     $trigger = New-ScheduledTaskTrigger -AtLogOn
     if (Get-ScheduledTask -TaskName "SynOsSession" -ErrorAction SilentlyContinue) {
-        Unregister-ScheduledTask -TaskName "SynOsSession" -Confirm:$false
+        Unregister-ScheduledTask -TaskName "SynOsSession" -Confirm:$false -ErrorAction Stop
     }
-    Register-ScheduledTask -TaskName "SynOsSession" -Action $action -Trigger $trigger -Description "SYN-OS-WINDOWS session start" | Out-Null
-    Disable-ScheduledTask -TaskName "SynOsSession" | Out-Null
+    Register-ScheduledTask -TaskName "SynOsSession" -Action $action -Trigger $trigger -Description "SYN-OS-WINDOWS session start" -ErrorAction Stop | Out-Null
+    Disable-ScheduledTask -TaskName "SynOsSession" -ErrorAction Stop | Out-Null
     $results["Autostart task"] = "registered (disabled)"
 } catch {
     $results["Autostart task"] = "FAILED: $_"

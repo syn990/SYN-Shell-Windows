@@ -13,7 +13,15 @@ It does **not** replace Windows' window manager, and it doesn't fight Windows fo
 
 ## Get it running
 
-One command installs everything (AutoHotkey, the status bar, a launcher, and so on — assumes none of it is on your machine yet):
+**First**, on a machine that's never run a local PowerShell script before, Windows blocks it by default. One-time fix, no admin needed:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+
+(If you skip this, you'll see an error like *"File ... cannot be loaded ... not digitally signed"* the moment you try to run anything below.)
+
+Then, one command installs everything (AutoHotkey, the status bar, a launcher, and so on — assumes none of it is on your machine yet):
 
 ```powershell
 & ".\scripts\Setup.ps1"
