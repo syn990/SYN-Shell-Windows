@@ -13,33 +13,11 @@ It does **not** replace Windows' window manager, and it doesn't fight Windows fo
 
 ## Get it running
 
-**First**, on a machine that's never run a local PowerShell script before, Windows blocks it by default. One-time fix, no admin needed:
+Download or clone this folder, then double-click **`Setup.bat`**. Installs everything (AutoHotkey, the status bar, a launcher, and so on — assumes none of it is on your machine yet).
 
-```powershell
-Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
-```
+Then double-click **`Start.bat`** — the bar appears, the keyboard shortcuts work.
 
-(If you skip this, you'll see an error like *"File ... cannot be loaded ... not digitally signed"* the moment you try to run anything below.)
-
-**If you downloaded this as a ZIP from GitHub** (rather than `git clone`), you'll likely hit that same error even after the step above — Windows tags every file from a downloaded ZIP as "from the internet," and `RemoteSigned` blocks unsigned scripts with that tag specifically. Clear it from inside the extracted folder:
-
-```powershell
-Get-ChildItem -Recurse | Unblock-File
-```
-
-Then, one command installs everything (AutoHotkey, the status bar, a launcher, and so on — assumes none of it is on your machine yet):
-
-```powershell
-& ".\scripts\Setup.ps1"
-```
-
-Then start it:
-
-```powershell
-& ".\scripts\Start-SynSession.ps1"
-```
-
-That's it — the bar appears, the keyboard shortcuts work. To make it start automatically every time you log in:
+To make it start automatically every time you log in:
 
 ```powershell
 Enable-ScheduledTask -TaskName SynOsSession
