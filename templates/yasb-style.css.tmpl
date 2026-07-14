@@ -1,0 +1,107 @@
+* {
+    font-family: "Terminess Nerd Font Mono", "Segoe UI Symbol", sans-serif;
+    font-size: 13px;
+    color: SYN_TEXT;
+}
+
+.yasb-bar {
+    background-color: SYN_BG;
+    border-bottom: 3px solid SYN_PANEL_HOVER;
+}
+
+.widget {
+    padding: 0 8px;
+}
+
+.glyph-widget,
+.desktop-widget,
+.active-window-widget,
+.media-widget,
+.wifi-widget,
+.volume-widget,
+.cpu-widget,
+.memory-widget,
+.disk-widget,
+.battery-widget,
+.clock-widget,
+.power-widget {
+    background-color: SYN_PANEL;
+    border-left: 1px solid SYN_PANEL_HOVER;
+}
+
+.glyph-widget:hover,
+.desktop-widget:hover,
+.cpu-widget:hover,
+.memory-widget:hover,
+.disk-widget:hover,
+.volume-widget:hover,
+.wifi-widget:hover,
+.clock-widget:hover,
+.power-widget:hover {
+    background-color: SYN_PANEL_HOVER;
+}
+
+.glyph-widget .label {
+    color: SYN_ACCENT;
+    font-size: 15px;
+    padding: 0 4px;
+}
+
+.icon {
+    padding-right: 5px;
+    font-size: 14px;
+}
+
+.desktop-widget .label {
+    color: SYN_ACCENT;
+}
+
+.active-window-widget {
+    background-color: transparent;
+    border-left: none;
+    color: SYN_TEXT;
+}
+
+.taskbar-widget {
+    background-color: transparent;
+    border-left: none;
+    padding: 0 4px;
+}
+
+.taskbar-widget .app-container {
+    border: 1px solid SYN_BORDER;
+    border-radius: 3px;
+    margin: 3px 2px;
+    padding: 0 3px;
+}
+
+.taskbar-widget .app-container:hover {
+    border-color: SYN_ACCENT;
+    background-color: SYN_PANEL_HOVER;
+}
+
+.taskbar-widget .app-container.foreground {
+    border-color: SYN_ACCENT;
+    background-color: SYN_ACCENT_DIM;
+}
+
+.media-widget {
+    background-color: SYN_ACCENT_DIM;
+    color: SYN_URGENT;
+}
+
+.battery-widget.critical .label {
+    color: SYN_URGENT;
+}
+
+.context-menu {
+    background-color: SYN_BG_ALT;
+    border: 1px solid SYN_BORDER;
+    color: SYN_TEXT;
+}
+
+.tooltip {
+    background-color: SYN_BG_ALT;
+    border: 1px solid SYN_PANEL_HOVER;
+    color: SYN_TEXT;
+}

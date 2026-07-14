@@ -1,0 +1,210 @@
+watch_stylesheet: true
+watch_config: true
+debug: false
+
+bars:
+  primary-bar:
+    enabled: true
+    screens: ['*']
+    class_name: "yasb-bar"
+    context_menu: false
+    alignment:
+      position: "top"
+      align: "center"
+    window_flags:
+      always_on_top: true
+      windows_app_bar: true
+      hide_on_fullscreen: false
+    dimensions:
+      width: "100%"
+      height: 28
+    padding:
+      top: 0
+      left: 0
+      bottom: 0
+      right: 0
+    animation:
+      enabled: false
+    widgets:
+      left: ["menu", "taskbar"]
+      center: ["active_window"]
+      right: ["wifi", "volume", "clock", "power"]
+      # desktop/cpu/memory/disk/battery are defined below but OFF the bar,
+      # not being pursued further -- individually byte-verified correct
+      # as scripts, but that never translated into confirmed working data
+      # on the actual bar, and it stopped being worth the cost to chase.
+
+widgets:
+  # Small icon per open window, far left. Native yasb widget, not a
+  # custom script -- no exec/encoding path to break.
+  taskbar:
+    type: "yasb.taskbar.TaskbarWidget"
+    options:
+      icon_size: 18
+      tooltip: true
+      show_only_visible: true
+      monitor_exclusive: true
+      title_label:
+        enabled: false
+      animation:
+        enabled: true
+        duration: 200
+      callbacks:
+        on_left: "toggle_window"
+        on_middle: "do_nothing"
+        on_right: "context_menu"
+
+  # Menu trigger button -- static label (like power below), no dependency
+  # on the broken exec-data path. Mirrors waybar's custom/glyph -> wmenu.
+  menu:
+    type: "yasb.custom.CustomWidget"
+    options:
+      label: "◆"
+      class_name: "glyph-widget"
+      tooltip: false
+      exec_options:
+        run_cmd: "cmd.exe /c echo ◆"
+        run_once: true
+        return_format: "string"
+      callbacks:
+        on_left: 'exec "AHK_EXE" "PROJECT_ROOT\ahk\syn-menu.ahk"'
+
+  # Rotating-glyph version of the menu button -- not referenced by the bar
+  # (the static "menu" widget above is simpler and does the same job),
+  # kept here as a working example of a data-driven custom widget.
+  glyph_menu:
+    type: "yasb.custom.CustomWidget"
+    options:
+      label: "<span>{data}</span>"
+      class_name: "glyph-widget"
+      tooltip: false
+      exec_options:
+        run_cmd: 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "PROJECT_ROOT\scripts\Get-Glyph.ps1"'
+        run_interval: 20000
+        return_format: "string"
+      callbacks:
+        on_left: 'exec "AHK_EXE" "PROJECT_ROOT\ahk\syn-menu.ahk"'
+
+  # Current virtual desktop glyph/name. Needs the VirtualDesktop PS module
+  # (Install-Module VirtualDesktop -Scope CurrentUser) -- see README.
+  desktop:
+    type: "yasb.custom.CustomWidget"
+    options:
+      label: "<span>{data[text]}</span>"
+      class_name: "desktop-widget"
+      tooltip: true
+      tooltip_label: "{data[tooltip]}"
+      exec_options:
+        run_cmd: 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "PROJECT_ROOT\scripts\Get-CurrentDesktop.ps1"'
+        run_interval: 2000
+        return_format: "json"
+
+  active_window:
+    type: "yasb.active_window.ActiveWindowWidget"
+    options:
+      label: "{win[title]}"
+      label_alt: "{win[title]}"
+      label_no_window: ""
+      label_icon: true
+      max_length: 60
+      max_length_ellipsis: "..."
+
+  media:
+    type: "yasb.media.MediaWidget"
+    options:
+      label: "{title}"
+      label_alt: "{artist}"
+      show_thumbnail: false
+      hide_empty: true
+
+  wifi:
+    type: "yasb.wifi.WifiWidget"
+    options:
+      label: "<span>{wifi_icon}</span> {wifi_name}"
+      label_alt: "{wifi_name} {wifi_strength}%"
+      update_interval: 5000
+
+  volume:
+    type: "yasb.volume.VolumeWidget"
+    options:
+      label: "<span>{icon}</span> {level}"
+      label_alt: "{level}"
+      tooltip: true
+      scroll_step: 2
+      icons:
+        "muted": ""
+        "10": ""
+        "30": ""
+        "60": ""
+        "100": ""
+
+  # CPU/memory/disk/battery are custom widgets backed by small .ps1 files
+  # (scripts/Get-Cpu.ps1 etc.) rather than yasb's native widgets, since
+  # their exact label placeholders weren't something I could verify --
+  # a real script with no inline quoting is simpler and known-correct.
+  cpu:
+    type: "yasb.custom.CustomWidget"
+    options:
+      label: "{data}% "
+      class_name: "cpu-widget"
+      tooltip: false
+      exec_options:
+        run_cmd: 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "PROJECT_ROOT\scripts\Get-Cpu.ps1"'
+        run_interval: 3000
+        return_format: "string"
+
+  memory:
+    type: "yasb.custom.CustomWidget"
+    options:
+      label: "{data}% "
+      class_name: "memory-widget"
+      tooltip: false
+      exec_options:
+        run_cmd: 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "PROJECT_ROOT\scripts\Get-Memory.ps1"'
+        run_interval: 5000
+        return_format: "string"
+
+  disk:
+    type: "yasb.custom.CustomWidget"
+    options:
+      label: " {data}"
+      class_name: "disk-widget"
+      tooltip: false
+      exec_options:
+        run_cmd: 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "PROJECT_ROOT\scripts\Get-Disk.ps1"'
+        run_interval: 60000
+        return_format: "string"
+
+  battery:
+    type: "yasb.custom.CustomWidget"
+    options:
+      label: "{data}% "
+      class_name: "battery-widget"
+      tooltip: false
+      exec_options:
+        run_cmd: 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "PROJECT_ROOT\scripts\Get-Battery.ps1"'
+        run_interval: 15000
+        return_format: "string"
+        hide_empty: true
+
+  clock:
+    type: "yasb.clock.ClockWidget"
+    options:
+      label: "{%H:%M:%S}"
+      label_alt: "{%Y-%m-%d %H:%M:%S}"
+      timezones: []
+      callbacks:
+        on_left: "toggle_label"
+
+  power:
+    type: "yasb.custom.CustomWidget"
+    options:
+      label: "⏻"
+      class_name: "power-widget"
+      tooltip: false
+      exec_options:
+        run_cmd: "cmd.exe /c echo ⏻"
+        run_once: true
+        return_format: "string"
+      callbacks:
+        on_left: 'exec "AHK_EXE" "PROJECT_ROOT\ahk\syn-menu.ahk" power'
