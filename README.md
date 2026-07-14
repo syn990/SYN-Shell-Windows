@@ -21,6 +21,12 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
 (If you skip this, you'll see an error like *"File ... cannot be loaded ... not digitally signed"* the moment you try to run anything below.)
 
+**If you downloaded this as a ZIP from GitHub** (rather than `git clone`), you'll likely hit that same error even after the step above — Windows tags every file from a downloaded ZIP as "from the internet," and `RemoteSigned` blocks unsigned scripts with that tag specifically. Clear it from inside the extracted folder:
+
+```powershell
+Get-ChildItem -Recurse | Unblock-File
+```
+
 Then, one command installs everything (AutoHotkey, the status bar, a launcher, and so on — assumes none of it is on your machine yet):
 
 ```powershell
